@@ -38,6 +38,11 @@ void loop() {
 
     delay(100);
 
+    // Scroll the wheel up (vertical) — exercises the pan/scroll report bytes
+    HID.scrollMouse(1);
+
+    delay(100);
+
     // Volume up media key
     HID.pressConsumer(MEDIA_VOL_UP);
     delay(10);

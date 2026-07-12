@@ -65,6 +65,11 @@ suite run fully unattended.
   (`modRefCount[8]`): a modifier bit is only cleared once its release count
   matches its press count. All three counters reset in `releaseAllKeys()` /
   `releaseAll()`.
+- The mouse report is **5 bytes** `[buttons, x, y, wheel, pan]` because
+  `TUD_HID_REPORT_DESC_MOUSE` declares a horizontal-wheel (pan) field. All
+  `sendMouse` payloads must be 5 bytes; sending 4 truncates the descriptor and
+  some hosts reject the report. `scrollMouse(wheel, pan)` drives the last two
+  bytes; `moveMouse` leaves them zero.
 - `charToHID` / `needsShift` tables are `PROGMEM` — harmless on ESP32, kept for
   AVR parity; don't "optimize" them away expecting a behavior change.
 - `setModifierState()` intentionally does **not** send a report; caller must

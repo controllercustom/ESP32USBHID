@@ -86,8 +86,9 @@ setModifierState(uint8_t state) // sets state but does NOT send a report
 getModifierState() / getPressedCount()
 
 // Mouse
-sendMouse(const uint8_t[4])     // raw 4-byte report [buttons, x, y, wheel]
+sendMouse(const uint8_t[5])     // raw 5-byte report [buttons, x, y, wheel, pan]
 moveMouse(int8_t dx, int8_t dy)
+scrollMouse(int8_t wheel, int8_t pan = 0) // vertical wheel + horizontal pan
 setMouseButtons(uint8_t btns)   // MOUSE_BTN_LEFT / _RIGHT / _MIDDLE
 getMouseButtons()
 clickMouse(uint8_t button)

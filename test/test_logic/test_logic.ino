@@ -70,6 +70,16 @@ void setup() {
   HID.releaseConsumer();
   CHECK("cons_release",  HID.getConsumerState() == 0);
 
+  // ---------------- mouse scroll (5-byte report) ----------------
+  // scrollMouse must not clobber the held button state, and the new API
+  // must not crash before begin() (SendReport gracefully returns false).
+  HID.setMouseButtons(MOUSE_BTN_LEFT);
+  HID.scrollMouse(5, 2);
+  CHECK("scroll_preserves_btns", HID.getMouseButtons() == MOUSE_BTN_LEFT);
+  HID.setMouseButtons(0);
+  HID.scrollMouse(0, 0);
+  CHECK("scroll_zero_btns",      HID.getMouseButtons() == 0);
+
   Serial.println(g_fail == 0 ? "LOGIC ALL PASS" : "LOGIC SOME FAIL");
 }
 

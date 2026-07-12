@@ -22,6 +22,7 @@ setModifierState	KEYWORD2
 getPressedCount	KEYWORD2
 sendMouse	KEYWORD2
 moveMouse	KEYWORD2
+scrollMouse	KEYWORD2
 setMouseButtons	KEYWORD2
 getMouseButtons	KEYWORD2
 clickMouse	KEYWORD2

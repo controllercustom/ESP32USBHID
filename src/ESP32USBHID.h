@@ -92,11 +92,14 @@ public:
 
   // ---- Mouse ----
 
-  // Raw 4-byte report: [buttons, x, y, wheel]
-  bool sendMouse(const uint8_t data[4]);
+  // Raw 5-byte report: [buttons, x, y, wheel, pan]
+  bool sendMouse(const uint8_t data[5]);
 
   // Movement sends current buttons + passed delta
   void moveMouse(int8_t dx, int8_t dy);
+
+  // Scroll sends current buttons + vertical wheel + horizontal pan delta
+  void scrollMouse(int8_t wheel, int8_t pan = 0);
 
   // Button access (immediately updates the report)
   void setMouseButtons(uint8_t btns);

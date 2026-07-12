@@ -36,11 +36,13 @@ except ImportError:
     sys.exit("ERROR: python3-evdev is required. Install with:\n"
              "    apt install python3-evdev   (or: pip install evdev)")
 
-# Linux keycodes the demo firmware is expected to emit.
+# Linux keycodes / event types the demo firmware is expected to emit.
 KEY_A = getattr(ecodes, "KEY_A")
 KEY_VOLUMEUP = getattr(ecodes, "KEY_VOLUMEUP")
 BTN_LEFT = getattr(ecodes, "BTN_LEFT")
+REL_WHEEL = getattr(ecodes, "REL_WHEEL")
 EV_KEY = getattr(ecodes, "EV_KEY")
+EV_REL = getattr(ecodes, "EV_REL")
 
 
 def discover_devices():
@@ -96,13 +98,16 @@ def monitor_events(paths, duration):
             except OSError:
                 time.sleep(0.05)
                 continue
-            if ev is not None and ev.type == EV_KEY and ev.value == 1:
-                out[label].add(ev.code)
-            else:
+            if ev is None:
                 time.sleep(0.005)
+                continue
+            if ev.type == EV_KEY and ev.value == 1:
+                out[label].setdefault("keys", set()).add(ev.code)
+            elif ev.type == EV_REL and ev.code == REL_WHEEL and ev.value != 0:
+                out[label].setdefault("wheel", set()).add(ev.code)
         dev.close()
 
-    out = {label: set() for label in paths}
+    out = {label: {} for label in paths}
     threads = [threading.Thread(target=mon, args=(p, lbl, out))
                for lbl, p in paths.items()]
     for t in threads:
@@ -157,9 +162,14 @@ def test_integration(repo, port, fqbn, libs):
     mouse = devices.get("mouse")
     print(f"monitoring {kbd} and {mouse}")
     seen = monitor_events({"kbd": kbd, "mouse": mouse}, 10)
-    print("seen keycodes:", {k: sorted(v) for k, v in seen.items()})
-    ok = (KEY_A in seen["kbd"] and KEY_VOLUMEUP in seen["kbd"]
-           and BTN_LEFT in seen["mouse"])
+    print("seen keycodes:", {k: sorted(v.get("keys", set()))
+                             for k, v in seen.items()})
+    print("seen scroll:", {k: sorted(v.get("wheel", set()))
+                           for k, v in seen.items()})
+    ok = (KEY_A in seen["kbd"].get("keys", set())
+          and KEY_VOLUMEUP in seen["kbd"].get("keys", set())
+          and BTN_LEFT in seen["mouse"].get("keys", set())
+          and REL_WHEEL in seen["mouse"].get("wheel", set()))
     print("RESULT:", "PASS" if ok else "FAIL")
     return ok
 

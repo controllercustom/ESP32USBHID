@@ -182,12 +182,17 @@ int ESP32USBHID::getPressedCount() const {
 // ====================================================================
 // Mouse
 // ====================================================================
-bool ESP32USBHID::sendMouse(const uint8_t data[4]) {
-  return hid.SendReport(2, data, 4);
+bool ESP32USBHID::sendMouse(const uint8_t data[5]) {
+  return hid.SendReport(2, data, 5);
 }
 
 void ESP32USBHID::moveMouse(int8_t dx, int8_t dy) {
-  uint8_t report[4] = { mouseBtns, (uint8_t)dx, (uint8_t)dy, 0 };
+  uint8_t report[5] = { mouseBtns, (uint8_t)dx, (uint8_t)dy, 0, 0 };
+  sendMouse(report);
+}
+
+void ESP32USBHID::scrollMouse(int8_t wheel, int8_t pan) {
+  uint8_t report[5] = { mouseBtns, 0, 0, (uint8_t)wheel, (uint8_t)pan };
   sendMouse(report);
 }
 
@@ -255,7 +260,7 @@ void ESP32USBHID::releaseAll() {
   consumerUsage = 0;
   uint8_t zero[8] = { 0 };
   sendKeyboard(zero);
-  uint8_t mzero[4] = { 0 };
+  uint8_t mzero[5] = { 0 };
   sendMouse(mzero);
   uint8_t czero[2] = { 0 };
   sendConsumer(czero);
