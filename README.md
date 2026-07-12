@@ -80,7 +80,7 @@ sendKeyboard(const uint8_t[8])  // raw 8-byte report
 pressKey(uint8_t kc)            // press (reference-counted, 6-key rollover)
 releaseKey(uint8_t kc)          // release
 releaseAllKeys()
-pressModifier(uint8_t mod)      // MOD_LCTRL / MOD_LSHIFT / MOD_LALT / MOD_LGUI
+pressModifier(uint8_t mod)      // MOD_LCTRL / MOD_LSHIFT / MOD_LALT / MOD_LGUI (reference-counted, per bit)
 releaseModifier(uint8_t mod)
 setModifierState(uint8_t state) // sets state but does NOT send a report
 getModifierState() / getPressedCount()

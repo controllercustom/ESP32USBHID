@@ -142,6 +142,7 @@ public:
 private:
   USBHID hid;
   uint8_t modifierState;
+  uint8_t modRefCount[8];
   uint8_t pressedKeys[6];
   int pressedCount;
   uint8_t keyRefCount[256];

@@ -40,11 +40,17 @@ suite run fully unattended.
 - **FQBN must use USB-OTG (TinyUSB) mode**: `USBMode=default`. The default
   `hwcdc` is Hardware CDC+JTAG and will not expose this HID device, even though
   it still compiles. ESP32-S2/S3 both have the USB-OTG peripheral this needs.
-- Target hardware in the example is an **ESP32-S3 Dev Module**; the trigger is
-  the **BOOT button on GPIO 0** (`INPUT_PULLUP`, active LOW).
+- Target hardware in the example is an **ESP32-S3 Dev Module** (ESP32-S2/S3
+  both have the USB-OTG peripheral). The example is **auto-trigger** and needs
+  no button; if you wire one, `GPIO 0` is the BOOT button (`INPUT_PULLUP`,
+  active LOW).
 - Upload over USB-OTG CDC uses `UploadMode=cdc`; otherwise use UART
-  (`/dev/ttyACM0` etc.). Serial Monitor talks to the app's `Serial` (UART),
-  separate from the HID USB link.
+  (`/dev/ttyACM0` etc.). `arduino-cli upload -p <port> --fqbn …` (or
+  `compile -u`) flashes over that transport; `arduino-cli upload -p <ip> …
+  --upload-field password=…` does a **native OTA** upload to a board running an
+  OTA service (e.g. ArduinoOTA) — but the bundled example does **not** enable
+  OTA, so use serial upload for it. Serial Monitor talks to the app's `Serial`
+  (UART), separate from the HID USB link.
 
 ## Architecture notes (non-obvious)
 
@@ -55,6 +61,10 @@ suite run fully unattended.
 - `pressKey`/`releaseKey` use reference counting (`keyRefCount[256]`) and 6-key
   rollover; `releaseConsumer()` takes no argument and clears the single 16-bit
   usage (consumer control has no true key-up/down distinction).
+- `pressModifier`/`releaseModifier` are also reference-counted, per bit
+  (`modRefCount[8]`): a modifier bit is only cleared once its release count
+  matches its press count. All three counters reset in `releaseAllKeys()` /
+  `releaseAll()`.
 - `charToHID` / `needsShift` tables are `PROGMEM` — harmless on ESP32, kept for
   AVR parity; don't "optimize" them away expecting a behavior change.
 - `setModifierState()` intentionally does **not** send a report; caller must

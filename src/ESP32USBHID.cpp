@@ -63,6 +63,7 @@ ESP32USBHID::ESP32USBHID()
     consumerUsage(0), ledStateValue(0), ledCallback(nullptr) {
   memset(pressedKeys, 0, sizeof(pressedKeys));
   memset(keyRefCount, 0, sizeof(keyRefCount));
+  memset(modRefCount, 0, sizeof(modRefCount));
   static bool once = false;
   if (!once) {
     once = true;
@@ -110,10 +111,11 @@ void ESP32USBHID::sendKeyboardReport() {
 
 void ESP32USBHID::pressKey(uint8_t kc) {
   if (keyRefCount[kc] == 0) {
+    bool already = false;
     for (int i = 0; i < pressedCount; i++) {
-      if (pressedKeys[i] == kc) return;
+      if (pressedKeys[i] == kc) { already = true; break; }
     }
-    if (pressedCount < 6) {
+    if (!already && pressedCount < 6) {
       pressedKeys[pressedCount++] = kc;
     }
   }
@@ -138,17 +140,28 @@ void ESP32USBHID::releaseAllKeys() {
   pressedCount = 0;
   memset(pressedKeys, 0, sizeof(pressedKeys));
   memset(keyRefCount, 0, sizeof(keyRefCount));
+  memset(modRefCount, 0, sizeof(modRefCount));
   modifierState = 0;
   sendKeyboardReport();
 }
 
 void ESP32USBHID::pressModifier(uint8_t mod) {
-  modifierState |= mod;
+  for (int i = 0; i < 8; i++) {
+    if (mod & (1 << i)) {
+      if (modRefCount[i] < 255) modRefCount[i]++;
+      modifierState |= (1 << i);
+    }
+  }
   sendKeyboardReport();
 }
 
 void ESP32USBHID::releaseModifier(uint8_t mod) {
-  modifierState &= ~mod;
+  for (int i = 0; i < 8; i++) {
+    if (mod & (1 << i)) {
+      if (modRefCount[i] > 0) modRefCount[i]--;
+      if (modRefCount[i] == 0) modifierState &= ~(1 << i);
+    }
+  }
   sendKeyboardReport();
 }
 
@@ -189,7 +202,7 @@ uint8_t ESP32USBHID::getMouseButtons() const {
 
 void ESP32USBHID::clickMouse(uint8_t button) {
   uint8_t prev = mouseBtns;
-  mouseBtns = button;
+  mouseBtns = prev | button;
   moveMouse(0, 0);
   mouseBtns = prev;
   moveMouse(0, 0);
@@ -236,6 +249,7 @@ void ESP32USBHID::releaseAll() {
   pressedCount = 0;
   memset(pressedKeys, 0, sizeof(pressedKeys));
   memset(keyRefCount, 0, sizeof(keyRefCount));
+  memset(modRefCount, 0, sizeof(modRefCount));
   modifierState = 0;
   mouseBtns = 0;
   consumerUsage = 0;
