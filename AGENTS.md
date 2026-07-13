@@ -28,7 +28,8 @@ arduino-cli compile --fqbn "esp32:esp32:esp32s3:USBMode=default" \
 ```
 
 `--libraries` must point at a directory that **contains** this repo folder
-(here `..` = `/home/pi`), so `ESP32USBHID` is found as a library. Do not point
+(here `..` is the parent directory containing this repo), so `ESP32USBHID` is
+found as a library. Do not point
 it at the repo root itself. Requires the `esp32:esp32` core (3.3.8 installed).
 
 `examples/BasicKeyboard` is an **auto-trigger demo** (fires a key/mouse/media
