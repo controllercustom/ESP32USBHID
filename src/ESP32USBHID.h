@@ -30,9 +30,9 @@
 #define KEY_DELETE     0x4C
 #define KEY_HOME       0x4A
 #define KEY_END        0x4D
-#define KEY_PAGE_UP    0x49
-#define KEY_PAGE_DOWN  0x4B
-#define KEY_INSERT     0x4E
+#define KEY_PAGE_UP    0x4B
+#define KEY_PAGE_DOWN  0x4E
+#define KEY_INSERT     0x49
 #define KEY_TAB        0x2B
 #define KEY_CAPS_LOCK  0x39
 #define KEY_NUM_LOCK   0x53
