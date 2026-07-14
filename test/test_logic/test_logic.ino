@@ -80,6 +80,22 @@ void setup() {
   HID.scrollMouse(0, 0);
   CHECK("scroll_zero_btns",      HID.getMouseButtons() == 0);
 
+  // ---------------- mouse multi-button (button bitmask) ----------------
+  HID.setMouseButtons(0);
+  HID.setMouseButtons(MOUSE_BTN_LEFT | MOUSE_BTN_RIGHT);
+  CHECK("mouse_two_down",
+        HID.getMouseButtons() == (MOUSE_BTN_LEFT | MOUSE_BTN_RIGHT));
+  HID.setMouseButtons(MOUSE_BTN_LEFT | MOUSE_BTN_RIGHT | MOUSE_BTN_MIDDLE);
+  CHECK("mouse_three_down",
+        HID.getMouseButtons() ==
+            (MOUSE_BTN_LEFT | MOUSE_BTN_RIGHT | MOUSE_BTN_MIDDLE));
+  // clickMouse must not permanently add its button to already-held bits
+  HID.setMouseButtons(MOUSE_BTN_LEFT);
+  HID.clickMouse(MOUSE_BTN_RIGHT);
+  CHECK("mouse_click_keeps_held", HID.getMouseButtons() == MOUSE_BTN_LEFT);
+  HID.setMouseButtons(0);
+  CHECK("mouse_all_up",           HID.getMouseButtons() == 0);
+
   Serial.println(g_fail == 0 ? "LOGIC ALL PASS" : "LOGIC SOME FAIL");
 }
 

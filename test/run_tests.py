@@ -40,6 +40,7 @@ except ImportError:
 KEY_A = getattr(ecodes, "KEY_A")
 KEY_VOLUMEUP = getattr(ecodes, "KEY_VOLUMEUP")
 BTN_LEFT = getattr(ecodes, "BTN_LEFT")
+BTN_RIGHT = getattr(ecodes, "BTN_RIGHT")
 REL_WHEEL = getattr(ecodes, "REL_WHEEL")
 EV_KEY = getattr(ecodes, "EV_KEY")
 EV_REL = getattr(ecodes, "EV_REL")
@@ -169,6 +170,7 @@ def test_integration(repo, port, fqbn, libs):
     ok = (KEY_A in seen["kbd"].get("keys", set())
           and KEY_VOLUMEUP in seen["kbd"].get("keys", set())
           and BTN_LEFT in seen["mouse"].get("keys", set())
+          and BTN_RIGHT in seen["mouse"].get("keys", set())
           and REL_WHEEL in seen["mouse"].get("wheel", set()))
     print("RESULT:", "PASS" if ok else "FAIL")
     return ok

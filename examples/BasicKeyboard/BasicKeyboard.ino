@@ -38,6 +38,13 @@ void loop() {
 
     delay(100);
 
+    // Hold two mouse buttons down together to exercise the button bitmask
+    HID.setMouseButtons(MOUSE_BTN_LEFT | MOUSE_BTN_RIGHT);
+    delay(100);
+    HID.setMouseButtons(0);
+
+    delay(100);
+
     // Scroll the wheel up (vertical) — exercises the pan/scroll report bytes
     HID.scrollMouse(1);
 
