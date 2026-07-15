@@ -35,6 +35,7 @@ onLED	KEYWORD2
 releaseAll	KEYWORD2
 charToHID	KEYWORD2
 needsShift	KEYWORD2
+version	KEYWORD2
 
 #######################################
 # Constants (LITERAL1)

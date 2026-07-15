@@ -5,7 +5,7 @@
 #define ESP32USBHID_H
 
 // Library version (keep in sync with library.properties).
-#define ESP32USBHID_VERSION "0.1.0"
+#define ESP32USBHID_VERSION "1.0.0"
 
 #include <Arduino.h>
 #include <USB.h>

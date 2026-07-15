@@ -106,10 +106,13 @@ onLED(void (*cb)(uint8_t))      // callback on host LED changes
 releaseAll()                    // zero all reports + clear internal state
 
 charToHID(char c) / needsShift(char c)   // ASCII -> HID keycode helpers
+
+version()                       // static; returns ESP32USBHID_VERSION (e.g. "0.1.0")
 ```
 
 Key constants are listed in `keywords.txt` and defined in `src/ESP32USBHID.h`
-(`MOD_*`, `MOUSE_BTN_*`, `KEY_*`, `MEDIA_*`).
+(`MOD_*`, `MOUSE_BTN_*`, `KEY_*`, `MEDIA_*`). The library version is defined by
+the `ESP32USBHID_VERSION` macro and returned by the static `ESP32USBHID::version()`.
 
 ## Notes
 
